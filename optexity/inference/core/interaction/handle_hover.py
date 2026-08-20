@@ -79,7 +79,12 @@ async def hover_element_index(
                 )
                 results = await browser.backend_agent.multi_act([action_model])
                 await LocatorExtraction.log_interacted_locator(
-                    browser, index, ".hover()", memory
+                    browser,
+                    index,
+                    ".hover()",
+                    memory,
+                    action=hover_element_action,
+                    task=task,
                 )
                 if results and results[0].error:
                     raise RuntimeError(

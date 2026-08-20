@@ -218,7 +218,12 @@ async def select_option_index(
             )
             results = await browser.backend_agent.multi_act([action_model])
             await LocatorExtraction.log_interacted_locator(
-                browser, index, f".select_option({matched_values[0]!r})", memory
+                browser,
+                index,
+                f".select_option({matched_values[0]!r})",
+                memory,
+                action=select_option_action,
+                task=task,
             )
             if results and results[0].error:
                 logger.debug(

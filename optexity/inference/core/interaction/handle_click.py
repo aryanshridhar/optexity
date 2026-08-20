@@ -84,6 +84,8 @@ async def click_element_index(
                 index,
                 f".click(button={click_element_action.button!r})",
                 memory,
+                action=click_element_action,
+                task=task,
             )
             if results and results[0].error:
                 raise RuntimeError(

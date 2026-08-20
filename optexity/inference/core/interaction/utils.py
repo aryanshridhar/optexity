@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import math
 import os
@@ -22,6 +23,7 @@ from optexity.inference.agents.index_prediction.action_prediction_locator_axtree
 )
 from optexity.inference.infra.browser import Browser
 from optexity.inference.models import get_llm_model_with_fallback
+from optexity.schema.automation import Automation
 from optexity.schema.memory import BrowserState, Memory
 from optexity.schema.task import Task
 from optexity.utils.settings import settings
@@ -30,6 +32,32 @@ from optexity.utils.utils import resolve_download_metadata_template
 logger = logging.getLogger(__name__)
 
 Page = Union[playwright.async_api.Page, patchright.async_api.Page]
+
+# Note (aryanshridhar): Only for assignment purposes
+_CACHED_AUTOMATION_FILENAME = "test_automation_cached.json"
+
+def _project_root() -> Path:
+    here = Path(__file__).resolve()
+    for p in [here, *here.parents]:
+        if (p / "test_automation.json").exists() or (
+            (p / "optexity").is_dir() and (p / "browser-use").is_dir()
+        ):
+            return p
+    return Path.cwd()
+
+
+def _write_cached_automation(automation: Automation) -> None:
+    automation.cached = True
+    out = _project_root() / _CACHED_AUTOMATION_FILENAME
+    out.write_text(
+        json.dumps(
+            automation.model_dump(exclude_none=True, exclude_defaults=True),
+            indent=4,
+        )
+        + "\n"
+    )
+    logger.info("wrote cached automation to %s", out)
+
 
 _HIGHLIGHT_JS_INJECT = """
 (bbox) => {
@@ -488,7 +516,13 @@ class LocatorExtraction:
 
     @classmethod
     async def log_interacted_locator(
-        cls, browser: Browser, index: int, method: str, memory: Memory | None = None
+        cls,
+        browser: Browser,
+        index: int,
+        method: str,
+        memory: Memory | None = None,
+        action: Any = None,
+        task: Task | None = None,
     ) -> None:
         """Log (and record on the trajectory) the Playwright-style locator browser-use
         actually interacted with for the LLM-predicted axtree *index*.
@@ -521,6 +555,17 @@ class LocatorExtraction:
                     f"(+{len(candidates) - 1} more candidate(s))"
                 )
                 cls.record_locator_candidates(memory, candidates)
+            # TODO (aryanshridhar): There seems be a bug in upstream repo not running fallback
+            # by default. Verify blast radius and fix this.
+            if (
+                candidates
+                and action is not None
+                and task is not None
+                and task.automation
+                and task.automation.cached
+            ):
+                action.command = cls.build_playwright_locator(element)
+                _write_cached_automation(task.automation)
         except Exception as e:
             logger.debug(
                 f"log_interacted_locator failed for index {index}: {type(e).__name__}: {e}"

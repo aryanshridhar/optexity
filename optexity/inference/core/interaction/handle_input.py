@@ -163,6 +163,8 @@ async def input_text_index(
                 index,
                 f".fill({(input_text_action.input_text or '')!r})",
                 memory,
+                action=input_text_action,
+                task=task,
             )
             if results and results[0].error:
                 raise RuntimeError(

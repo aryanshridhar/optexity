@@ -73,7 +73,7 @@ async def check_element_index(
         )
         await browser.backend_agent.multi_act([action_model])
         await LocatorExtraction.log_interacted_locator(
-            browser, index, ".check()", memory
+            browser, index, ".check()", memory, action=check_action, task=task
         )
     except ElementNotFoundInAxtreeException as e:
         raise e
@@ -137,7 +137,7 @@ async def uncheck_element_index(
         )
         await browser.backend_agent.multi_act([action_model])
         await LocatorExtraction.log_interacted_locator(
-            browser, index, ".uncheck()", memory
+            browser, index, ".uncheck()", memory, action=uncheck_action, task=task
         )
     except ElementNotFoundInAxtreeException as e:
         raise e
