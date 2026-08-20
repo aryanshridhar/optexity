@@ -459,7 +459,7 @@ async def task_processor():
                     continue
 
             from optexity.schema.automation import Automation
-            with open("test_automation_cached.json", "r") as f:
+            with open("test_automation.json", "r") as f:
                 automation = json.load(f)
                 automation = Automation.model_validate(automation)
             task.automation = automation
