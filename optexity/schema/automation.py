@@ -660,6 +660,10 @@ class Automation(BaseModel):
     # Any mismatch or health-check failure falls back to the normal cold flow.
     reuse_page_if_already_on_url: bool = False
     take_final_screenshot: bool = True
+    # Set only by our compiler. Gates fallback recache so normal Optexity
+    # automations never rewrite same workflow.
+    # TODO (aryanshridhar): Think of a better way to handle this without encoding it in the schema.
+    cached: bool = False
     parameters: Parameters
     nodes: list[
         Annotated[

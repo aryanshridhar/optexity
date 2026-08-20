@@ -1,0 +1,19 @@
+{
+    "url": "https://dummyfiles.dev/en/#image",
+    "parameters": {
+        "input_parameters": {},
+        "generated_parameters": {}
+    },
+    "nodes": [
+        {
+            "type": "action_node",
+            "interaction_action": {
+                "agentic_task": {
+                    "task": "Enter the file name here as sample and create the file. Once done, go to Text tab, Select Text type as Medical, enter filename as sample and create the file.",
+                    "max_steps": 15,
+                    "backend": "browser_use"
+                }
+            }
+        }
+    ]
+}

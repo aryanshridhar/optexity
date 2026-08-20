@@ -147,6 +147,8 @@ async def upload_file_index(
             index,
             f".set_input_files({upload_file_action.file_path!r})",
             memory,
+            action=upload_file_action,
+            task=task,
         )
     except ElementNotFoundInAxtreeException as e:
         raise e

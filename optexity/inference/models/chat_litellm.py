@@ -123,16 +123,25 @@ class ChatLiteLLM(BaseChatModel):
 
     @overload
     async def ainvoke(
-        self, messages: list[BaseMessage], output_format: None = None
+        self,
+        messages: list[BaseMessage],
+        output_format: None = None,
+        **kwargs: Any,
     ) -> ChatInvokeCompletion[str]: ...
 
     @overload
     async def ainvoke(
-        self, messages: list[BaseMessage], output_format: type[T]
+        self,
+        messages: list[BaseMessage],
+        output_format: type[T],
+        **kwargs: Any,
     ) -> ChatInvokeCompletion[T]: ...
 
     async def ainvoke(
-        self, messages: list[BaseMessage], output_format: type[T] | None = None
+        self,
+        messages: list[BaseMessage],
+        output_format: type[T] | None = None,
+        **kwargs: Any,
     ) -> ChatInvokeCompletion[T] | ChatInvokeCompletion[str]:
         try:
             response = await litellm.acompletion(
